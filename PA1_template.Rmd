@@ -14,7 +14,11 @@ activityData <- read.csv(unz("activity.zip", "activity.csv"), header=T, quote="\
 
 ## What is mean total number of steps taken per day?
 
+<<<<<<< HEAD
 ```{r, echo=TRUE}
+=======
+```{r, echo=FALSE}
+>>>>>>> 53799d98aca680f71dcef31a6aac8956fc70b0b8
 activityData$date <- as.Date(activityData$date)
 activityData <- na.omit(activityData)
 numberOfStepsTakenDaily <- rowsum(activityData$steps, format(activityData$date, '%Y-%m-%d'))
@@ -24,7 +28,11 @@ names(numberOfStepsTakenDaily) <- ("steps")
 
 ## What is the average daily activity pattern?
 
+<<<<<<< HEAD
 ```{r histogram, echo=FALSE}
+=======
+```{r, echo=FALSE}
+>>>>>>> 53799d98aca680f71dcef31a6aac8956fc70b0b8
 library(plyr)
 avgNumberOfStepsInterval <- ddply(activityData, ~ interval, summarise, mean=mean(steps))
 library(ggplot2)
@@ -35,7 +43,11 @@ avgNumberOfStepsInterval[which.max(avgNumberOfStepsInterval$mean),]
 
 ## Imputing missing values
 
+<<<<<<< HEAD
 ```{r, echo=TRUE}
+=======
+```r
+>>>>>>> 53799d98aca680f71dcef31a6aac8956fc70b0b8
 # load the data
 activityData <- read.csv(unz("activity.zip", "activity.csv"), header=T, quote="\"", sep=",")
 activityData$date <- as.Date(activityData$date)
@@ -46,6 +58,7 @@ stepsPerDayNoNAs <- aggregate(steps ~ date, activityDataWithoutNAs, sum)
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
+<<<<<<< HEAD
 ```{r,echo=TRUE}
 weekdays <- c("Monday","Tuesday","Wednesday","Thursday","Friday")
 activityData$dow = as.factor(ifelse(is.element(weekdays(as.Date(activityData$date)),weekdays), "Weekday", "Weekend"))
@@ -54,6 +67,9 @@ steps_by_interval_i <- aggregate(steps ~ interval + dow, activityData, mean)
 
 
 ```{r, echo=FALSE}
+=======
+```r
+>>>>>>> 53799d98aca680f71dcef31a6aac8956fc70b0b8
 # Load the lattice graphical library
 library(lattice)
 
@@ -66,6 +82,9 @@ xyplot(steps_by_interval_i$steps ~ steps_by_interval_i$interval|steps_by_interva
        type="l", 
        col = "purple")
 ```
+<<<<<<< HEAD
 
 There are slight differences in the patterns between weekdays and weekends.
 
+=======
+>>>>>>> 53799d98aca680f71dcef31a6aac8956fc70b0b8
