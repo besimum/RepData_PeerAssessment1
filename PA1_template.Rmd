@@ -8,13 +8,13 @@ output:
 
 ## Loading and preprocessing the data
 
-```r
+```{r, echo=FALSE}
 activityData <- read.csv(unz("activity.zip", "activity.csv"), header=T, quote="\"", sep=",")
 ```
 
 ## What is mean total number of steps taken per day?
 
-```r
+```{r, echo=FALSE}
 activityData$date <- as.Date(activityData$date)
 activityData <- na.omit(activityData)
 numberOfStepsTakenDaily <- rowsum(activityData$steps, format(activityData$date, '%Y-%m-%d'))
@@ -24,7 +24,7 @@ names(numberOfStepsTakenDaily) <- ("steps")
 
 ## What is the average daily activity pattern?
 
-```r
+```{r, echo=FALSE}
 library(plyr)
 avgNumberOfStepsInterval <- ddply(activityData, ~ interval, summarise, mean=mean(steps))
 library(ggplot2)
