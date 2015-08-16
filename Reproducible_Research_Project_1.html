@@ -88,7 +88,7 @@ img {
 activityData$date &lt;- as.Date(activityData$date)
 activityDataWithoutNAs &lt;- activityData
 activityDataWithoutNAs[is.na(activityDataWithoutNAs$steps), &quot;steps&quot;] &lt;- 0
-stepsPerDayNoNAs &lt;- aggregate(steps ~ date, activityDataWithoutNAs, sum)</code></pre>
+stepsPerDayWithoutNAs &lt;- aggregate(steps ~ date, activityDataWithoutNAs, sum)</code></pre>
 </div>
 <div id="what-is-mean-total-number-of-steps-taken-per-day" class="section level2">
 <h2>What is mean total number of steps taken per day?</h2>
@@ -100,7 +100,7 @@ numberOfStepsTakenDaily &lt;- rowsum(activityData$steps, format(activityData$dat
 numberOfStepsTakenDaily &lt;- data.frame(numberOfStepsTakenDaily)
 names(numberOfStepsTakenDaily) &lt;- (&quot;steps&quot;)</code></pre>
 <p>2.If you do not understand the difference between a histogram and a barplot, research the difference between them. Make a histogram of the total number of steps taken each day.</p>
-<pre class="r"><code>hist(stepsPerDayNoNAs$steps, 
+<pre class="r"><code>hist(stepsPerDayWithoutNAs$steps, 
      main = &quot;Histogram - Total Number of Steps Taken Daily (NA omitted)&quot;, 
      xlab = &quot;Steps&quot;, 
      col = &quot;purple&quot;, 
@@ -109,10 +109,11 @@ names(numberOfStepsTakenDaily) &lt;- (&quot;steps&quot;)</code></pre>
 <ol start="3" style="list-style-type: decimal">
 <li>Calculate and report the mean and median total number of steps taken per day</li>
 </ol>
-<pre class="r"><code>mean(stepsPerDayNoNAs$steps)</code></pre>
+<pre class="r"><code>mean(stepsPerDayWithoutNAs$steps, na.rm = TRUE)</code></pre>
 <pre><code>## [1] 9354.23</code></pre>
-<pre class="r"><code>median(stepsPerDayNoNAs$steps)</code></pre>
+<pre class="r"><code>median(stepsPerDayWithoutNAs$steps, na.rm = TRUE)</code></pre>
 <pre><code>## [1] 10395</code></pre>
+<p>These formulas gives a mean and median of <strong>9354.23</strong> and <strong>10395</strong> respectively.</p>
 </div>
 <div id="what-is-the-average-daily-activity-pattern" class="section level2">
 <h2>What is the average daily activity pattern?</h2>
@@ -131,6 +132,7 @@ qplot(x=interval, y=mean, data = avgNumberOfStepsInterval,  geom = &quot;line&qu
 <pre class="r"><code>avgNumberOfStepsInterval[which.max(avgNumberOfStepsInterval$mean),]</code></pre>
 <pre><code>##     interval     mean
 ## 104      835 206.1698</code></pre>
+<p>The 5-minute interval which contains the maximum number of steps is <strong>835</strong> across all days. The 5-minute interval mean is <strong>206.1698</strong>.</p>
 </div>
 <div id="imputing-missing-values" class="section level2">
 <h2>Imputing missing values</h2>
@@ -142,37 +144,15 @@ qplot(x=interval, y=mean, data = avgNumberOfStepsInterval,  geom = &quot;line&qu
 names(incompleteData) &lt;- (&quot;steps&quot;)
 nrow(incompleteData[is.na(incompleteData$steps),])</code></pre>
 <pre><code>## [1] 2304</code></pre>
+<p>The total number of rows with NAs is <strong>2304</strong>.</p>
 <p>2.Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.</p>
-<pre class="r"><code>library(sqldf)</code></pre>
-<pre><code>## Loading required package: gsubfn
-## Loading required package: proto
-## Loading required package: RSQLite
-## Loading required package: DBI</code></pre>
-<pre class="r"><code>dataset &lt;- sqldf('SELECT d.* FROM &quot;avgNumberOfStepsInterval&quot; as i
-JOIN &quot;activityData&quot; as d ON d.interval = i.interval
-ORDER BY d.date, d.interval')</code></pre>
-<pre><code>## Loading required package: tcltk</code></pre>
-<pre class="r"><code># Load the data
-activityData &lt;- read.csv(unz(&quot;activity.zip&quot;, &quot;activity.csv&quot;), header=T, quote=&quot;\&quot;&quot;, sep=&quot;,&quot;)</code></pre>
-<pre class="r"><code># convert date to date data type
+<pre class="r"><code># load the data
+activityData &lt;- read.csv(unz(&quot;activity.zip&quot;, &quot;activity.csv&quot;), header=T, quote=&quot;\&quot;&quot;, sep=&quot;,&quot;)
 activityData$date &lt;- as.Date(activityData$date)
-activityDataWithoutNAs &lt;- activityData
-activityDataWithoutNAs[is.na(activityDataWithoutNAs$steps), &quot;steps&quot;] &lt;- 0
-stepsPerDayNoNAs &lt;- aggregate(steps ~ date, activityDataWithoutNAs, sum)</code></pre>
-<pre class="r"><code>mean(stepsPerDayNoNAs$steps)</code></pre>
-<pre><code>## [1] 9354.23</code></pre>
-<pre class="r"><code>median(stepsPerDayNoNAs$steps)</code></pre>
-<pre><code>## [1] 10395</code></pre>
+activityDataWithoutNAs &lt;- activityData</code></pre>
 <p>3.Create a new dataset that is equal to the original dataset but with the missing data filled in.</p>
-<pre class="r"><code>numberOfSteps &lt;- as.integer(sqldf('SELECT sum(steps) FROM dataset'))
-
-numberOfstepsByDate &lt;- sqldf('SELECT date, sum(steps) as &quot;numberOfStepsByDate&quot; 
-    FROM dataset GROUP BY date 
-    ORDER BY date')
-
-dailySteps &lt;- sqldf('SELECT date, numberOfstepsByDate as &quot;steps&quot;
-    FROM &quot;numberOfstepsByDate&quot;
-    ORDER BY date') </code></pre>
+<pre class="r"><code>activityDataWithoutNAs[is.na(activityDataWithoutNAs$steps), &quot;steps&quot;] &lt;- 0
+stepsPerDayWithoutNAs &lt;- aggregate(steps ~ date, activityDataWithoutNAs, sum)</code></pre>
 <p>4.Make a histogram of the total number of steps taken each day</p>
 <pre class="r"><code># histogram of the total number of steps taken each day
 hist(numberOfStepsTakenDaily$steps, 
@@ -186,6 +166,7 @@ hist(numberOfStepsTakenDaily$steps,
 <pre><code>## [1] 10766.19</code></pre>
 <pre class="r"><code>median(numberOfStepsTaken$steps)</code></pre>
 <pre><code>## [1] 10765</code></pre>
+<p>The mean and median total number of steps taken per day is <strong>10766.19</strong> and <strong>10765</strong> respectively.</p>
 <p>Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?</p>
 <p>Yes, these values differ immensely from the first part of the assignment. The introduction of NA values leads to a large mean, and median values.</p>
 </div>
@@ -194,9 +175,7 @@ hist(numberOfStepsTakenDaily$steps,
 <p>For this part the weekdays() function may be of some help here. Use the dataset with the filled-in missing values for this part.</p>
 <p>1.Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.</p>
 <pre class="r"><code>weekdays &lt;- c(&quot;Monday&quot;,&quot;Tuesday&quot;,&quot;Wednesday&quot;,&quot;Thursday&quot;,&quot;Friday&quot;)
-
 activityData$dow = as.factor(ifelse(is.element(weekdays(as.Date(activityData$date)),weekdays), &quot;Weekday&quot;, &quot;Weekend&quot;))
-
 steps_by_interval_i &lt;- aggregate(steps ~ interval + dow, activityData, mean)
 
 # View the factor
