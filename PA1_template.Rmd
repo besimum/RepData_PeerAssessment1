@@ -67,5 +67,5 @@ xyplot(steps_by_interval_i$steps ~ steps_by_interval_i$interval|steps_by_interva
        col = "purple")
 ```
 
-There are slight differences in the patterns between weekdays and weekends. 
+There are slight differences in the patterns between weekdays and weekends.
 
